@@ -1,0 +1,17 @@
+{
+  "short_name": "SIAK PA",
+  "name": "SIAK Sistemi - Info PA",
+  "icons": [
+    {
+      "src": "ICONA FAVICON.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#002060",
+  "theme_color": "#002060",
+  "display": "standalone",
+  "orientation": "any"
+}
