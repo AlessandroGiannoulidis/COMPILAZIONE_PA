@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SIAK Sistemi - Info PA</title>
 <link rel="icon" href="ICONA FAVICON.png" type="image/png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -21,6 +22,60 @@
     background-position: center top;
     background-repeat: repeat;
     background-attachment: scroll;
+  }
+
+  /* Form Inserimento Password */
+  #pwd-box {
+    background: rgba(2, 2, 2, 0.85);
+    color: #fff;
+    padding: 24px 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    text-align: center;
+    margin-top: 60px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  #pwd-box h3 {
+    margin-bottom: 16px;
+    color: #ffde02;
+    font-size: 16px;
+  }
+
+  #pwd-box input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 14px;
+    outline: none;
+    text-align: center;
+  }
+
+  #pwd-box button {
+    background: #002060;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+    width: 100%;
+  }
+
+  #pwd-box button:hover {
+    background: #1a5276;
+  }
+
+  #pwd-error {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: 10px;
+    display: none;
   }
 
   #hint {
@@ -57,6 +112,7 @@
     display: flex;
     align-items: center;
     gap: 8px;  
+    max-width: 90vw;
   }
   #toast.show {
     opacity: 1;
@@ -278,7 +334,7 @@
 
   @media (max-width: 470px) {
     .doc-header img.circle {
-     min-height: 85x;
+     min-height: 85px;
      min-width: 85px;
      max-height: 85px; 
      max-width: 85px;
@@ -307,7 +363,7 @@
     .grid-row-2col, .grid-row-1col, .grid-row-full {
       display: flex;
       flex-direction: column;
-      border-bottom: 2px solid #002060;
+      border-bottom: 1px solid #d0d7de;
     }
 
     .lbl {
@@ -380,319 +436,88 @@
 </head>
 <body>
 
-<div id="hint">
-  <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="12" y1="7" x2="12" y2="13" stroke-width="2"/>
-    <circle cx="12" cy="17" r="1.5" fill="currentColor" stroke="none"/>
-  </svg>
-  <span>Clicca su qualsiasi valore in nero per copiarlo automaticamente negli appunti, poi incolla con <strong>Ctrl+V</strong> dove vuoi.</span>
+<!-- FORM PER ACCESSO TRAMITE PASSWORD -->
+<div id="pwd-box">
+  <h3>Area Protetta SIAK Sistemi</h3>
+  <input type="password" id="pwd-input" placeholder="Inserisci Password" onkeydown="if(event.key==='Enter') decifra()">
+  <button onclick="decifra()">Sblocca Documento</button>
+  <div id="pwd-error">Password errata. Riprova.</div>
 </div>
 
-<div class="doc">
+<!-- CONTENITORE DOVE VIENE INIETTATO IL CONTENUTO DECIFRATO -->
+<div id="app"></div>
 
-  <!-- HEADER -->
-  <div class="two-col">
-    <div class="section-circle">
-      <div class="doc-header-top doc-header doc-header-color">
-        <img class="circle" src="ICONA FAVICON.png" alt="AVATAR">
-      </div>
-    </div>
-
-    <div class="section-head">
-      <div class="doc-header">
-        <h1 class="brand-title">
-          <span class="brand-main">
-            <span class="v1">COMPILAZIONE DOCUMENTI</span>
-            <span class="v2">DETTAGLI COMPILAZIONE</span>
-            <span class="v3">AFFIDAMENTI PUBBLICI</span>
-            <span class="v4">COMPILAZIONE DOCS.</span>
-            <span class="v5">INFORMAZIONI PA</span>
-            <span class="v6">COMPILAZIONE</span>
-            <span class="v7">DETTAGLI</span>
-            <span class="v8">INFO PA</span>
-          </span>
-          <span class="brand-sub">
-            <span class="v1">PER LA PUBBLICA AMMINISTRAZIONE</span>
-            <span class="v2">DOCS. PUBBLICA AMMINISTRAZIONE</span>
-            <span class="v3">INFO COMPILAZIONE DOCUMENTI</span>
-            <span class="v4">PUBBLICA AMMINISTRAZIONE</span>
-            <span class="v5">AFFIDAMENTI PUBBLICI</span>
-            <span class="v6">DOCUMENTI DELLA PA</span>
-            <span class="v7">DOCUMENTI PA</span>
-            <span class="v8">DOCUMENTI</span>
-          </span>
-        </h1>
-        <img src="ISO_9001.webp" alt="9001">
-        <img src="ISO_27001.webp" alt="27001">
-        <img src="ACN.png" alt="ACN">
-        <img src="MEPA.png" alt="MEPA">
-        <img src="POLICE.png" alt="DDDPLC">
-        <img src="LOGO SIAK.png" alt="Logo SIAK">
-      </div>
-    </div>
-  </div>
-
-  <!-- INFORMAZIONI AZIENDA + CONTO CORRENTE -->
-  <div class="info-azienda">
-    <div class="section">
-      <div class="grid-header">INFORMAZIONI AZIENDA</div>
-      
-      <div class="grid-row-2col">
-        <div class="lbl">Ragione sociale</div>
-        <div class="val" onclick="copy(this)" data-v="SIAK Sistemi S.r.l. Unipersonale" title="Clicca per copiare">SIAK Sistemi S.r.l. Unipersonale</div>
-        <div class="lbl">N° dipendenti</div>
-        <div class="val" onclick="copy(this)" data-v="14" title="Clicca per copiare">14</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">C.F. / P. IVA</div>
-        <div class="val" onclick="copy(this)" data-v="02249900180" title="Clicca per copiare">02249900180</div>
-        <div class="lbl">Matricola INPS</div>
-        <div class="val" onclick="copy(this)" data-v="5708251888 (Sede di Pavia)" title="Clicca per copiare">5708251888 (Sede di Pavia)</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">E-mail</div>
-        <div class="val" onclick="copy(this)" data-v="info@siaksistemi.com" title="Clicca per copiare">info@siaksistemi.com</div>
-        <div class="lbl">Data inizio attività</div>
-        <div class="val" onclick="copy(this)" data-v="17/03/2008" title="Clicca per copiare">17/03/2008</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">PEC</div>
-        <div class="val" onclick="copy(this)" data-v="siaksistemi@pec.it" title="Clicca per copiare">siaksistemi@pec.it</div>
-        <div class="lbl">Posizione INPS</div>
-        <div class="val" onclick="copy(this)" data-v="5708251888/00" title="Clicca per copiare">5708251888/00</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">Telefono</div>
-        <div class="val" onclick="copy(this)" data-v="0382-933263" title="Clicca per copiare">0382-933263</div>
-        <div class="lbl">CCNL applicato</div>
-        <div class="val" onclick="copy(this)" data-v="Commercio" title="Clicca per copiare">Commercio</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">Fax</div>
-        <div class="val" onclick="copy(this)" data-v="0382-1850232" title="Clicca per copiare">0382-1850232</div>
-        <div class="lbl">Codice CCNL</div>
-        <div class="val" onclick="copy(this)" data-v="H011" title="Clicca per copiare">H011</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">Sede legale</div>
-        <div class="val" onclick="copy(this)" data-v="Via M. D&apos;Azeglio, 25/A, 20089 Rozzano (MI)" title="Clicca per copiare">Via M. D'Azeglio, 25/A, 20089 Rozzano (MI)</div>
-        <div class="lbl">P.A.T. INAIL</div>
-        <div class="val" onclick="copy(this)" data-v="020377137/84" title="Clicca per copiare">020377137/84</div>
-      </div>
-
-      <div class="grid-row-2col">
-        <div class="lbl">Sede operativa</div>
-        <div class="val" onclick="copy(this)" data-v="Via Perlasca, 15, 27010 Vellezzo Bellini (PV)" title="Clicca per copiare">Via Perlasca, 15, 27010 Vellezzo Bellini (PV)</div>
-        <div class="lbl">Codice INAIL</div>
-        <div class="val" onclick="copy(this)" data-v="18280547 (Sede di Pavia)" title="Clicca per copiare">18280547 (Sede di Pavia)</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="grid-header">CONTO CORRENTE</div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Intestatario</div>
-        <div class="val" onclick="copy(this)" data-v="SIAK Sistemi S.r.l." title="Clicca per copiare">SIAK Sistemi S.r.l.</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Banca</div>
-        <div class="val" onclick="copy(this)" data-v="Monte dei Paschi di Siena" title="Clicca per copiare">Monte dei Paschi di Siena</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Filiale</div>
-        <div class="val" onclick="copy(this)" data-v="Pavia - Agenzia n° 2" title="Clicca per copiare">Pavia - Agenzia n° 2</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">IBAN</div>
-        <div class="val" onclick="copy(this)" data-v="IT25V0103011300000001618455" title="Clicca per copiare">IT25V0103011300000001618455</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Numero conto</div>
-        <div class="val" onclick="copy(this)" data-v="000001618455" title="Clicca per copiare">000001618455</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">ABI</div>
-        <div class="val" onclick="copy(this)" data-v="01030" title="Clicca per copiare">01030</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">CAB</div>
-        <div class="val" onclick="copy(this)" data-v="11300" title="Clicca per copiare">11300</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">CIN</div>
-        <div class="val" onclick="copy(this)" data-v="V" title="Clicca per copiare">V</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LEGALE RAPPRESENTANTE + AGENZIA DELLE ENTRATE -->
-  <div class="tre-col">
-    <div class="section">
-      <div class="grid-header">LEGALE RAPPRESENTANTE</div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Nome Completo</div>
-        <div class="val" onclick="copy(this)" data-v="Yuri Merli" title="Clicca per copiare">Yuri Merli</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Data di nascita</div>
-        <div class="val" onclick="copy(this)" data-v="21/02/1990" title="Clicca per copiare">21/02/1990</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Luogo di nascita</div>
-        <div class="val" onclick="copy(this)" data-v="Milano" title="Clicca per copiare">Milano</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Codice fiscale</div>
-        <div class="val" onclick="copy(this)" data-v="MRLYRU89B21F205O" title="Clicca per copiare">MRLYRU89B21F205O</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Residenza</div>
-        <div class="val" onclick="copy(this)" data-v="Via G. Carducci, 29, 27010, Giussago (PV)" title="Clicca per copiare">Via G. Carducci, 29, 27010, Giussago (PV)</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Data nomina Amministratore Unico</div>
-        <div class="val" onclick="copy(this)" data-v="01/07/2019" title="Clicca per copiare">01/07/2019</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="grid-header">AGENZIA DELLE ENTRATE</div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Nome ufficio</div>
-        <div class="val" onclick="copy(this)" data-v="Ufficio Territoriale MILANO 5" title="Clicca per copiare">Ufficio Territoriale MILANO 5</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Codice ufficio</div>
-        <div class="val" onclick="copy(this)" data-v="TNQ" title="Clicca per copiare">TNQ</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Indirizzo</div>
-        <div class="val" onclick="copy(this)" data-v="Via dei Missaglia, 97, 20142 Milano" title="Clicca per copiare">Via dei Missaglia, 97, 20142 Milano</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">Telefono</div>
-        <div class="val" onclick="copy(this)" data-v="02-893075" title="Clicca per copiare">02-893075</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">E-mail</div>
-        <div class="val" onclick="copy(this)" data-v="dp.imilano.utmilano5@agenziaentrate.it" title="Clicca per copiare">dp.imilano.utmilano5@agenziaentrate.it</div>
-      </div>
-
-      <div class="grid-row-1col">
-        <div class="lbl">PEC</div>
-        <div class="val" onclick="copy(this)" data-v="dp.1milano@pce.agenziaentrate.it" title="Clicca per copiare">dp.1milano@pce.agenziaentrate.it</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CAMERA DI COMMERCIO -->
-  <div class="section">
-    <div class="grid-header">CAMERA DI COMMERCIO</div>
-
-    <div class="grid-row-2col">
-      <div class="lbl">Nome CCIAA</div>
-      <div class="val" onclick="copy(this)" data-v="Milano Monza Brianza Lodi" title="Clicca per copiare">Milano Monza Brianza Lodi</div>
-      <div class="lbl">N° iscrizione</div>
-      <div class="val" onclick="copy(this)" data-v="02249900180" title="Clicca per copiare">02249900180</div>
-    </div>
-
-    <div class="grid-row-2col">
-      <div class="lbl">Data atto di costituzione</div>
-      <div class="val" onclick="copy(this)" data-v="22/03/2008" title="Clicca per copiare">22/03/2008</div>
-      <div class="lbl">Data iscrizione CCIAA</div>
-      <div class="val" onclick="copy(this)" data-v="14/06/2019" title="Clicca per copiare">14/06/2019</div>
-    </div>
-
-    <div class="grid-row-2col">
-      <div class="lbl">N° Repertorio CCIAA / N° REA</div>
-      <div class="val" onclick="copy(this)" data-v="MI - 2561862" title="Clicca per copiare">MI - 2561862</div>
-      <div class="lbl">Durata Società</div>
-      <div class="val" onclick="copy(this)" data-v="Fino al 31/12/2050" title="Clicca per copiare">Fino al 31/12/2050</div>
-    </div>
-
-    <div class="grid-row-2col">
-      <div class="lbl">Codice ATECO prevalente</div>
-      <div class="val" onclick="copy(this)" data-v="46.64.99" title="Clicca per copiare">46.64.99</div>
-      <div class="lbl">Codice ATECO secondario</div>
-      <div class="val" onclick="copy(this)" data-v="62.90.09" title="Clicca per copiare">62.90.09</div>
-    </div>
-
-    <div class="grid-row-full">
-      <div class="lbl">Oggetto attività</div>
-      <div class="val-text" style="text-align: justify" onclick="copy(this)" data-v="Commercio all&apos;ingrosso di altre macchine ed attrezzature per l&apos;industria, il commercio e la navigazione nca. Ulteriori specifiche: Commercio all&apos;ingrosso di terminali per macchinari industriali e per l&apos;analisi di gestione, di software ed hardware (tachigrafi) con particolare riferimento al settore dei trasporti." title="Clicca per copiare">Commercio all'ingrosso di altre macchine ed attrezzature per l'industria, il commercio e la navigazione nca. Ulteriori specifiche: Commercio all'ingrosso di terminali per macchinari industriali e per l'analisi di gestione, di software ed hardware (tachigrafi) con particolare riferimento al settore dei trasporti.</div>
-    </div>
-
-    <div class="grid-row-full">
-      <div class="lbl">Oggetto sociale</div>
-      <div class="val-text" style="text-align: justify" onclick="copy(this)" data-v="La società ha per oggetto l&apos;attività di sviluppo e commercio di sistemi hardware e software per macchinari industriali e per l&apos;analisi di gestione e di raccolta dati, con particolare riferimento al settore dei trasporti e della navigazione, ivi compresi i tachigrafi, nonché le attività di formazione, installazione, manutenzione ed assistenza dei beni commercializzati e sviluppati. Essa potrà inoltre compiere tutte le operazioni di sviluppo informatico, nonché commerciali, industriali ed immobiliari necessarie od utili per il conseguimento dell&apos;oggetto sociale, compiere, in via non prevalente e non nei confronti del pubblico, operazioni finanziarie e mobiliari ed assumere, solo a scopo di stabile investimento e non di collocamento, sia direttamente che indirettamente, partecipazioni od interessenze in altre società od enti aventi oggetto analogo od affine o comunque connesso al proprio. È in ogni caso escluso l&apos;esercizio di attività di cui alla legge 2 gennaio 1991 n. 1, al D.Lgs. 24 febbraio 1998, n. 58 ed al decreto legislativo 1 settembre 1993 n. 385. Sono altresì escluse le competenze riservate dalla legge alle professioni protette." title="Clicca per copiare">La società ha per oggetto l'attività di sviluppo e commercio di sistemi hardware e software per macchinari industriali e per l'analisi di gestione e di raccolta dati, con particolare riferimento al settore dei trasporti e della navigazione, ivi compresi i tachigrafi, nonché le attività di formazione, installazione, manutenzione ed assistenza dei beni commercializzati e sviluppati. Essa potrà inoltre compiere tutte le operazioni di sviluppo informatico, nonché commerciali, industriali ed immobiliari necessarie od utili per il conseguimento dell'oggetto sociale, compiere, in via non prevalente e non nei confronti del pubblico, operazioni finanziarie e mobiliari ed assumere, solo a scopo di stabile investimento e non di collocamento, sia direttamente che indirettamente, partecipazioni od interessenze in altre società od enti avanti oggetto analogo od affine o comunque connesso al proprio. È in ogni caso escluso l'esercizio di attività di cui alla legge 2 gennaio 1991 n. 1, al D.Lgs. 24 febbraio 1998, n. 58 ed al decreto legislativo 1 settembre 1993 n. 385. Sono altresì escluse le competenze riservate dalla legge alle professioni protette.</div>
-    </div>
-  </div>
-
-</div><!-- .doc -->
-
+<!-- ELEMENTO PER LA NOTIFICA TOAST -->
 <div id="toast"></div>
 
 <script>
-let toastTimer;
-  function copy(el) {
-    const text = el.dataset.v;
-    const testoTroncato = text.length > 50 ? text.slice(0, 50) + '…' : text;
-    const contenutoToast = `<img src="BOE.png" alt="" style="width: 71px; height: 65px; object-fit: contain;">✓ Copiato: ${testoTroncato}`;
+// --- INCOLLA QUI LA NUOVA STRINGA CIFRATA GENERATA DAL CIFRATORE ---
+const PAYLOAD_CIFRATO = "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";
 
-    navigator.clipboard.writeText(text).then(() => {
-      el.classList.add('copied');
-      setTimeout(() => el.classList.remove('copied'), 1200);
-      
-      const toast = document.getElementById('toast');
-      toast.innerHTML = contenutoToast;
-      toast.classList.add('show');
-      
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      
-      const toast = document.getElementById('toast');
-      toast.innerHTML = contenutoToast;
-      toast.classList.add('show');
-      
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-    });
+function decifra() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errorDiv = document.getElementById('pwd-error');
+  
+  if (!pwd) return;
+
+  try {
+    const bytes = CryptoJS.AES.decrypt(PAYLOAD_CIFRATO, pwd);
+    const decryptedHTML = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (decryptedHTML && decryptedHTML.length > 0) {
+      document.getElementById('pwd-box').style.display = 'none';
+      document.getElementById('app').innerHTML = decryptedHTML;
+    } else {
+      errorDiv.style.display = 'block';
+    }
+  } catch (e) {
+    errorDiv.style.display = 'block';
   }
+}
+
+// --- FUNZIONE COPY() CON GESTIONE MOBILE ---
+let toastTimer;
+function copy(el) {
+  const text = el.dataset.v;
+  const isMobile = window.innerWidth <= 600;
+  
+  let contenutoToast;
+  
+  if (isMobile) {
+    contenutoToast = `<img src="BOE.png" alt="" style="width: 45px; height: 40px; object-fit: contain;">✓ Copiato`;
+  } else {
+    const testoTroncato = text.length > 30 ? text.slice(0, 30) + '…' : text;
+    contenutoToast = `<img src="BOE.png" alt="" style="width: 71px; height: 65px; object-fit: contain;">✓ Copiato: ${testoTroncato}`;
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 1200);
+    
+    const toast = document.getElementById('toast');
+    toast.innerHTML = contenutoToast;
+    toast.classList.add('show');
+    
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    
+    const toast = document.getElementById('toast');
+    toast.innerHTML = contenutoToast;
+    toast.classList.add('show');
+    
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+}
 </script>
 </body>
 </html>
