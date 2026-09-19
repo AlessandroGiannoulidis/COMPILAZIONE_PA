@@ -11,14 +11,16 @@ const ASSETS_TO_CACHE = [
   './MEPA.png',
   './POLICE.png',
   './LOGO SIAK.png',
-  './BOE.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js'
+  './BOE.png'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      // Usiamo Promise.allSettled per evitare che un singolo file mancante blocchi l'attivazione della PWA
+      return Promise.allSettled(
+        ASSETS_TO_CACHE.map(url => cache.add(url))
+      );
     })
   );
   self.skipWaiting();
