@@ -30,6 +30,89 @@
     background-attachment: scroll;
   }
 
+/* --- SCHERMATA ACCESSO PASSWORD --- */
+  #pwd-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.75);
+    background-image: url('SERIGRAFIA_SLIDE.png');
+    background-size: 50%;
+    background-position: center;
+    background-repeat: repeat;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+
+  #pwd-box {
+    background: #ffffff;
+    padding: 30px 24px;
+    border-radius: 16px;
+    border: 4px solid #002060;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #pwd-box h3 {
+    margin-bottom: 12px;
+    color: #002060;
+    font-size: 18px;
+  }
+
+  #pwd-box p {
+    font-size: 11px;
+    color: #333;
+    margin-bottom: 16px;
+  }
+
+  #pwd-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #002060;
+    font-size: 14px;
+    margin-bottom: 14px;
+    outline: none;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  #pwd-box button {
+    background: #002060;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  #pwd-error {
+    color: #d9534f;
+    font-size: 12px;
+    margin-top: 10px;
+    display: none;
+    font-weight: bold;
+  }
+
+  /* --- CONTENITORE PRINCIPALE --- */
+  #app {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   #hint {
     max-width: 1450px;
     background: rgba(2, 2, 2, 0.7);
@@ -135,6 +218,35 @@
     width: auto;
     object-fit: contain;
     filter: drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.5));
+  }
+
+  .pwd-col {
+    display: flex;
+    flex-direction: column;
+    max-width: 380px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .pwd-col-img {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+ }
+
+  .pwd-img {
+    max-height: 200px;
+    max-width: 100%;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    border: 4px solid #fff;
+    background: #2182c2;
   }
 
   .doc-header img.circle {
@@ -437,13 +549,21 @@
 
 <!-- SCHERMATA LOGIN PASSWORD -->
 <div id="pwd-screen">
-  <div id="pwd-box">
-    <h3>SIAK Sistemi - Info PA</h3>
-    <p>Inserisci la password per sbloccare il documento.</p>
-    <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter') decifra()">
-    <button onclick="decifra()">Accedi</button>
-    <div id="pwd-error">Password errata. Riprova.</div>
-  </div>
+  <div class="pwd-col">
+   <div class="pwd-col-img">
+    <img src="LOGO SIAK.png" alt="Logo SIAK" class="pwd-img">
+    <img src="LOCK.webp" alt="Logo SIAK" class="pwd-img">
+ </div>
+
+
+    <div id="pwd-box">
+      <h3>SIAK Sistemi - Info PA</h3>
+      <p>Inserisci la password per sbloccare il documento.</p>
+      <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter') decifra()">
+      <button onclick="decifra()">Accedi</button>
+      <div id="pwd-error">Password errata. Riprova.</div>
+   </div>
+ </div>
 </div>
 
 <!-- CONTENITORE DOVE VIENE INIETTATO IL CONTENUTO DECIFRATO -->
