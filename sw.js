@@ -11,6 +11,7 @@ const ASSETS_TO_CACHE = [
   './MEPA.png',
   './POLICE.png',
   './LOGO SIAK.png',
+  './LOGO.png',
   './BOE.png'
 ];
 
